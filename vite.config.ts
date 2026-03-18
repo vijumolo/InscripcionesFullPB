@@ -4,7 +4,7 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/AppInscripciones2/',
+  base: './',
   plugins: [react()],
   resolve: {
     alias: {

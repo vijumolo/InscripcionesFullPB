@@ -1,5 +1,5 @@
 
-import { Outlet } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import logo from '../assets/logo.png';
 
 export const Layout = () => {
@@ -11,7 +11,20 @@ export const Layout = () => {
                         <img src={logo} alt="TCT Colombia" className="h-12 w-auto" />
                         <span className="font-bold text-xl tracking-tight text-slate-900 hidden sm:block">RegistroEventos</span>
                     </div>
-                    {/* Aquí podrías agregar navegación si se requiere (Admin, etc) */}
+                    <div className="flex items-center gap-3">
+                        <Link
+                            to="/"
+                            className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                        >
+                            Inscripciones
+                        </Link>
+                        <Link
+                            to="/admin"
+                            className="inline-flex items-center rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                        >
+                            Admin
+                        </Link>
+                    </div>
                 </div>
             </header>
 

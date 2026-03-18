@@ -19,6 +19,7 @@ La nueva version basada en PocketBase vive en:
 - Configuracion inicial en `.env`
 - Guia de backend en `POCKETBASE_SETUP.md`
 - Scripts de Windows para descargar y arrancar PocketBase
+- Flujo de deploy del frontend a GitHub Pages
 
 ## Inicio rapido en Windows
 
@@ -57,6 +58,7 @@ run-dev.bat
 - Frontend Vite: `http://localhost:5173`
 - PocketBase API: `http://127.0.0.1:8090`
 - PocketBase Dashboard: `http://127.0.0.1:8090/_/`
+- Panel admin de la app: `/#/admin`
 
 ## Configuracion requerida en PocketBase
 
@@ -71,6 +73,72 @@ Ese archivo describe:
 - indices unicos
 - evento inicial recomendado
 - migracion automatica incluida en `pocketbase/pb_migrations`
+
+## Como funciona el backend en esta version
+
+En esta app, el backend no es un modulo Node separado.
+
+El backend es PocketBase, y las funciones administrativas de negocio viven en dos partes:
+
+- PocketBase como servidor y base de datos
+- el panel web de la app en `/#/admin`
+
+Desde ese panel admin puedes:
+
+- definir nombre y descripcion del evento
+- definir fecha de cierre de inscripciones
+- administrar categorias
+- exportar inscritos a Excel
+- borrar la base de inscritos para iniciar un nuevo evento
+- editar y eliminar participantes
+
+## Deploy recomendado
+
+Esta solucion se despliega en dos piezas:
+
+1. Frontend estatico en GitHub Pages
+2. PocketBase en un servidor Windows o Linux con IP o dominio publico
+
+GitHub Pages no puede ejecutar PocketBase porque PocketBase necesita un proceso backend persistente.
+
+### Frontend en GitHub Pages
+
+El repo ya incluye el workflow:
+
+- `.github/workflows/deploy-pages.yml`
+
+Antes de usarlo, en GitHub configura:
+
+- `Settings > Pages`: habilitar GitHub Pages desde GitHub Actions
+- `Settings > Secrets and variables > Actions > Variables`: crear `VITE_POCKETBASE_URL`
+
+Ese valor debe apuntar a tu backend PocketBase publicado, por ejemplo:
+
+```text
+https://tudominio-pb.com
+```
+
+### Backend PocketBase
+
+Publica PocketBase en un VPS o servidor donde puedas ejecutar:
+
+```powershell
+.\pocketbase.exe serve --http=0.0.0.0:8090
+```
+
+Luego:
+
+1. Crea o actualiza el superusuario
+2. Aplica migraciones con `apply-migrations.bat`
+3. Configura un proxy reverso con HTTPS si va a produccion
+
+## Recomendacion de seguridad
+
+Ahora mismo la app conserva el comportamiento de la version original:
+
+- las inscripciones publicas pueden editarse
+
+Eso se hizo para mantener compatibilidad funcional. Antes de ponerlo en produccion abierta, conviene endurecer esa parte.
 
 ## Nota
 

@@ -28,6 +28,14 @@ export const AdminDashboard = () => {
         checkAuthAndLoadData();
     }, []);
 
+    const getEmptyEventConfig = (): EventConfig => ({
+        id: '',
+        eventName: '',
+        eventDescription: '',
+        activeCategories: [],
+        registration_close_date: '',
+    });
+
     const checkAuthAndLoadData = async () => {
         if (!isAdminAuthenticated()) {
             navigate('/admin');
@@ -48,6 +56,8 @@ export const AdminDashboard = () => {
 
             if (eventData) {
                 setEventConfig(eventData);
+            } else {
+                setEventConfig(getEmptyEventConfig());
             }
 
             setParticipants(participantsData || []);
@@ -69,11 +79,15 @@ export const AdminDashboard = () => {
 
     const handleSaveEvent = async () => {
         if (!eventConfig) return;
+        if (!eventConfig.eventName.trim()) {
+            toast.error('Debes ingresar el nombre del evento');
+            return;
+        }
         setSaving(true);
         try {
             const updatedEvent = await saveEvent(eventConfig);
             setEventConfig(updatedEvent);
-            toast.success('Evento actualizado correctamente');
+            toast.success(eventConfig.id ? 'Evento actualizado correctamente' : 'Evento creado correctamente');
         } catch (error) {
             console.error('Error saving event:', error);
             toast.error('Error al guardar el evento');
@@ -291,7 +305,7 @@ export const AdminDashboard = () => {
                         ) : (
                             <div className="p-4 bg-yellow-50 text-yellow-800 rounded-lg flex gap-3">
                                 <AlertTriangle className="h-5 w-5 flex-shrink-0" />
-                                <p>No se encontró una configuración de evento activa. Crea un registro en la colección `events` de PocketBase.</p>
+                                <p>No se pudo cargar la configuración del evento.</p>
                             </div>
                         )}
                     </div>
